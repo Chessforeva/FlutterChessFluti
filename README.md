@@ -10,7 +10,8 @@ Everything is shareable and advancable anywhere.
 Currently 1.0.8
 
 There are bugs, I know them. Anyway it is playable on web
-https://chessforeva.github.io/web/flutichess/web/index.html
+https://chessforeva.github.io
+
 
 Also windows executable
 https://chessforeva.codeberg.page/flutichess/flutichess_win64_release108.zip
