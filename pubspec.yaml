@@ -1,0 +1,21 @@
+name: fluti_chess
+description: "A simple chess playing Flutter project."
+
+version: 1.0.8+1
+
+environment:
+  sdk: '>=3.2.5 <4.0.0'
+
+dependencies:
+
+  flutter:
+    sdk: flutter
+  #url_launcher: ^6.1.0
+  cupertino_icons: ^1.0.2
+
+flutter:
+  uses-material-design: true
+
+  assets:
+  - assets/images/
+
