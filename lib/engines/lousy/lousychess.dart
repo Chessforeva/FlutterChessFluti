@@ -385,6 +385,19 @@ class BitBoard {
 
   //====
 
+// to debug bitboards
+  logBitsOfInt(int N) {
+    for (int v = 7; v >= 0; v--) {
+      String s = "";
+      for (int h = 0; h < 7; h++) {
+        int sq = (v << 3) | h;
+        int bit = 1 << sq;
+        s += " " + ((N & bit) != 0 ? "1" : ".");
+      }
+      logPrint(s);
+    }
+  }
+
   //==== Initialize Rays and Direction
 
   InitializeRays() {
@@ -902,7 +915,6 @@ class Board {
 
     // miscillaneous
     repeatedPosition_SearchOffset = 0;
-    movesHist = [];
   }
 
   FEN_To_Board(String fen) {
@@ -1042,6 +1054,7 @@ class Board {
     // all done. Now also store the current state of the board. This also stores the HashValues.
 
     StoreBoardState();
+    movesHist = [];
   }
 
   //====
@@ -1367,9 +1380,10 @@ class Board {
       logPrint("Square is not empty");
     }
     int newIndex = NrPieces[color][pieceTypeNr];
-    SquareContents[position].pieceType = pieceTypeNr;
-    SquareContents[position].pieceColor = color;
-    SquareContents[position].pieceIndex = newIndex;
+    var C = SquareContents[position];
+    C.pieceType = pieceTypeNr;
+    C.pieceColor = color;
+    C.pieceIndex = newIndex;
     //
     TotalNrPieces[color]++;
     NrPieces[color][pieceTypeNr] = newIndex + 1;
@@ -1385,9 +1399,10 @@ class Board {
   }
 
   RemovePieceFromBoard(int position) {
-    int index = SquareContents[position].pieceIndex;
-    int pieceTypeNr = SquareContents[position].pieceType;
-    int color = SquareContents[position].pieceColor;
+    var C = SquareContents[position];
+    int index = C.pieceIndex;
+    int pieceTypeNr = C.pieceType;
+    int color = C.pieceColor;
     //
     // If a rook is captured, we might want to update the CastlingInfo !
     if (pieceTypeNr == Const.RookID) {
@@ -1404,9 +1419,9 @@ class Board {
       }
     }
     //
-    SquareContents[position].pieceType = Const.EmptyID;
-    SquareContents[position].pieceColor = Const.InvalidID;
-    SquareContents[position].pieceIndex = Const.InvalidID;
+    C.pieceType = Const.EmptyID;
+    C.pieceColor = Const.InvalidID;
+    C.pieceIndex = Const.InvalidID;
     //
     TotalNrPieces[color]--;
     int lastIndex = NrPieces[color][pieceTypeNr] - 1;
@@ -1429,19 +1444,21 @@ class Board {
   }
 
   MovePieceOnBoard(int oldPosition, int newPosition) {
+    var C = SquareContents[oldPosition];
     // Capture must be handled by RemovePieceFromBoard
-    int index = SquareContents[oldPosition].pieceIndex;
-    int pieceTypeNr = SquareContents[oldPosition].pieceType;
-    int color = SquareContents[oldPosition].pieceColor;
+    int index = C.pieceIndex;
+    int pieceTypeNr = C.pieceType;
+    int color = C.pieceColor;
 
     //
-    SquareContents[oldPosition].pieceType = Const.EmptyID;
-    SquareContents[oldPosition].pieceColor = Const.InvalidID;
-    SquareContents[oldPosition].pieceIndex = Const.InvalidID;
+    C.pieceType = Const.EmptyID;
+    C.pieceColor = Const.InvalidID;
+    C.pieceIndex = Const.InvalidID;
     //
-    SquareContents[newPosition].pieceType = pieceTypeNr;
-    SquareContents[newPosition].pieceColor = color;
-    SquareContents[newPosition].pieceIndex = index;
+    var N = SquareContents[newPosition];
+    N.pieceType = pieceTypeNr;
+    N.pieceColor = color;
+    N.pieceIndex = index;
     //
     PiecePos[color][pieceTypeNr][index] = newPosition;
     //
@@ -1766,7 +1783,7 @@ class Board {
     ToggleMoveColor();
     // Store the state exactly as it was AFTER this move was made. Also stores HashValue.
     StoreBoardState();
-    //
+
     movesHist.add(move);
 
     return moveIsLegal;
@@ -2343,6 +2360,7 @@ class MoveGenerator {
               : magicMoves.BlackPawnMove(position, AllAndEp)) &
           ~myPieces;
       //
+
       while (pawnMoves != 0) {
         int bitNr = bitboard.LSB(pawnMoves);
         pawnMoves &= ~BitBoard.Identity[bitNr]; // reset
@@ -4386,8 +4404,6 @@ class SearchMove {
   int MoveTimeMultiplier = 3;
 
   // results
-  List<Move> currentMoves = []; // Move[]
-  int nrCurrentMovesFromPV = 0;
   int currentScore = 0;
   int currentDepth = 0;
   int currentDepthFinishedTime = 0;
@@ -4521,9 +4537,8 @@ class SearchMove {
     int nrPVMoves = PrincipalVariation.length;
     if (nrPVMoves > maxNrThinkMoves) nrPVMoves = maxNrThinkMoves;
 
-    int nrThinkMoves = 0;
     //Move[]
-    List<Move> thinkMoves = List.generate(maxNrThinkMoves, (i) => Move());
+    List<Move> thinkMoves = [];
 
     // First store everything in a clone, since making captures reorders the indices of pieces in PiecePos.
     // This reorders future moves. Somehow, this gives problems
@@ -4531,21 +4546,18 @@ class SearchMove {
     clone.LoadFrom(board);
     //
     for (int i = 0; i < nrPVMoves; i++) {
-      thinkMoves[i] = PrincipalVariation[i];
-      board.MakeMove(PrincipalVariation[i]);
-      nrThinkMoves++;
+      //Move O = new Move();
+      //MoveDo.copy(PrincipalVariation[i], O);
+      var O = PrincipalVariation[i];
+      thinkMoves.add(O);
+      board.MakeMove(O);
     }
-    // finished the PrincipalVariation. Now follow the TT
-    nrCurrentMovesFromPV = nrThinkMoves;
 
     // now rewind the board by undoing the moves made
-    for (int i = nrThinkMoves - 1; i >= 0; i--) board.UnMakeMove(thinkMoves[i]);
+    while (thinkMoves.length > 0) board.UnMakeMove(thinkMoves.removeLast());
+
     // switch back to the original board
     board.LoadFrom(clone);
-    //
-    // So found the moves, now store them
-    currentMoves = [];
-    for (int i = 0; i < nrThinkMoves; i++) currentMoves.add(thinkMoves[i]);
   }
 
   //====
@@ -4601,14 +4613,6 @@ class SearchMove {
       return;
     }
 
-    // save current moves history
-    List<Move> sv_movesHist = [];
-    for (int z = 0; z < board.movesHist.length; z++) {
-      var O = Move();
-      MoveDo.copy(board.movesHist[z], O);
-      sv_movesHist.add(O);
-    }
-
     bool reportIsSent = false;
     isThinking = false;
     isInExtendedTime = false;
@@ -4643,6 +4647,7 @@ class SearchMove {
         score = AlphaBeta(depth, -1000000000, 1000000000, false, true);
       else
         score = AlphaBeta(depth, -1000000000, 1000000000, true, true);
+
       if (rootColorToMove == Const.Black)
         score = -score; // since NegaMax always returns : larger is better
       // maybe the maximum time got exceeded :
@@ -4652,7 +4657,10 @@ class SearchMove {
 
       PrincipalVariation = [];
       for (int t = 0; t < nrMovesInPVLine[0]; t++) {
-        PrincipalVariation.add(PV_Matrix[0][t]);
+        //var O = Move();
+        //MoveDo.copy(PV_Matrix[0][t], O);
+        var O = PV_Matrix[0][t];
+        PrincipalVariation.add(O);
       }
 
       // save current results : this must be done thread safe !!!
@@ -4693,8 +4701,6 @@ class SearchMove {
     if (!reportIsSent) StoreCurrentEngineResults(true);
     //
     isThinking = false;
-
-    board.movesHist = sv_movesHist;
   }
 
   //====
@@ -5141,7 +5147,6 @@ class SearchMove {
         // history now scores from historyMoveScore to 2*historyMoveScore
         scores[i] += historyMoveScore +
             (historyMoveScore *
-                1.0 *
                 History[historyTableNr][moveFromPos][moveToPos] ~/
                 maxHistoryValue);
       }

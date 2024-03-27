@@ -292,6 +292,9 @@ class PainterHelper {
 
   // Start a new game
   NewGame() {
+    dragSquare = -1;
+    dSquares = [];
+
     ImPlayingWhite = !ImPlayingWhite;
     Owl.NewGame();
     if (is64bitOK) Lousy.NewGame();
@@ -301,6 +304,9 @@ class PainterHelper {
 
   // Take back a move
   TakeBack() {
+    dragSquare = -1;
+    dSquares = [];
+
     for (int i = 0; i < 2; i++) {
       Owl.TakeBack();
       if (is64bitOK) Lousy.TakeBack();
