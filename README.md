@@ -9,13 +9,13 @@ Everything is shareable and advancable anywhere.
 
 Currently 1.0.8
 
-Web application is playable on web
+Web application is playable on web (~10Mb)
 https://chessforeva.github.io
 
-Also windows executable
+Also windows executable, zipped in 12Mb
 https://chessforeva.codeberg.page/flutichess/flutichess_win64_release108.zip
 
-Android apk (should allow 3rd party apps, sorry)
+Android application .apk 20Mb (should allow 3rd party apps on install, sorry)
 https://chessforeva.codeberg.page/flutichess/flutichess_108.apk
 
 IOS - not an Apple fanboy
@@ -28,13 +28,14 @@ IOS - not an Apple fanboy
 
 Flutter is awesome.
 Lousy chess engine requires 64 bit platform (not javascript VM).
-OwlChess is oldie.
+OwlChess is an oldie for 32 bit platform.
 It is not stockfish, it is dart and flutter programming.
 
 # Also...
 
 There will be lots of flutter works after downloading sources.
 Just read what people say and look at other flutter projects.
+Or add these folders to the flutter hello world.
 
 Alpha version for now.
 mar.2024
