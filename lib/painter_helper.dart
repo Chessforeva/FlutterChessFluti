@@ -1,7 +1,3 @@
-// allow for flutter build web
-// disallow flutter build windows
-//import 'package:url_launcher/url_launcher.dart';
-
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
@@ -32,8 +28,6 @@ class PainterHelper {
   late Canvas canvas;
   late int width, height;
   double SquareSize = 70.0;
-  final Uri githubPage =
-      Uri.parse('https://github.com/Chessforeva/FlutterChessFluti');
 
   bool repaint = true;
 
@@ -54,6 +48,9 @@ class PainterHelper {
 
   bool txtYourMove = false;
   bool txtThinking = false;
+
+  bool goGitHub = false; // if should redirect to GitHub page
+  bool goWorkSheet = false; // if should redirect to worksheet page
 
   // objects of preloaded images of pieces
   ui.Image? wk, wq, wr, wb, wn, wp;
@@ -155,7 +152,7 @@ class PainterHelper {
   // buttons
 
   ui.Image? but_Img(int i) {
-    return [bNG, bTB, bLo, bOw, bPG, bGI][i];
+    return [bNG, bTB, bOw, bLo, bPG, bGI][i];
   }
 
   double but_scale(int i) {
@@ -199,6 +196,10 @@ class PainterHelper {
 
   int animType() {
     return Owl.anm_pc - 1;
+  }
+
+  String get_MoveslistUcis() {
+    return Owl.MoveslistUcis;
   }
 
   // Gestures
@@ -261,16 +262,17 @@ class PainterHelper {
         if (i == 1) TakeBack();
 
         if (i == 2) {
-          Engine_Selected = Engine_LOUSY;
-          Lousy.LampTck = 20;
-        }
-        if (i == 3) {
           Engine_Selected = Engine_OWL;
           Owl.LampTck = 20;
         }
+        if (i == 3) {
+          Engine_Selected = Engine_LOUSY;
+          Lousy.LampTck = 20;
+        }
 
         // allow for flutter build web
-        //if (i == 5) launchUrl(githubPage);
+        if (i == 4) goWorkSheet = true;
+        if (i == 5) goGitHub = true;
       }
     }
   }

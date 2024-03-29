@@ -1,3 +1,5 @@
+import 'url_launcher_mixin.dart';
+
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -31,7 +33,8 @@ class Painter extends StatefulWidget {
 //      setState() there (in listener) initiates
 //      an internal call of myPainter.paint()
 //
-class _GameBoardState extends State<Painter> with TickerProviderStateMixin {
+class _GameBoardState extends State<Painter>
+    with TickerProviderStateMixin, UrlLauncherMixin {
   PainterHelper PH = PainterHelper(); // create helper object
 
   late AnimationController animation;
@@ -117,6 +120,19 @@ class _GameBoardState extends State<Painter> with TickerProviderStateMixin {
         isComplex: true,
         painter: myPainter(PH: PH), // The main CustomPainter
       ),
+      onTap: () async {
+        if (PH.goWorkSheet) {
+          PH.goWorkSheet = false;
+          // url_launch
+          await launchURL("https://chessforeva.gitlab.io/C0_wsheet.htm?m=" +
+              PH.get_MoveslistUcis());
+        }
+        if (PH.goGitHub) {
+          PH.goGitHub = false;
+          // url_launch
+          await launchURL("https://github.com/Chessforeva/FlutterChessFluti");
+        }
+      },
       onTapDown: (TapDownDetails details) {
         myTap(details); // Capture mouse
       },
@@ -174,11 +190,13 @@ class myPainter extends CustomPainter {
     for (int i = 0; i < 6; i++) {
       bool f = true;
       // Lousy uses 64bits
-      if (i == 2 && (!PH.is64bitOK)) f = false;
-      // pgn part not developed jet
-      if (i == 4) f = false;
+      if (i == 3 && (!PH.is64bitOK)) f = false;
 
-      // should be visible for flutter build web
+      //-------if disable url_launcher
+
+      //---- pgn part, not to go to WorkSheet
+      //if (i == 4) f = false;
+      //---- not to go to GitHub
       //if (i == 5) f = false;
 
       if (f) drawButtTxt(PH.but_Img(i), i);
@@ -301,10 +319,10 @@ class myPainter extends CustomPainter {
 
       ui.Image? img2 = PH.lm0;
       if (I == 2) {
-        if (PH.Lousy.Tck > 0 || PH.Lousy.LampTck > 0) img2 = PH.lm1;
+        if (PH.Owl.Tck > 0 || PH.Owl.LampTck > 0) img2 = PH.lm1;
       }
       if (I == 3) {
-        if (PH.Owl.Tck > 0 || PH.Owl.LampTck > 0) img2 = PH.lm1;
+        if (PH.Lousy.Tck > 0 || PH.Lousy.LampTck > 0) img2 = PH.lm1;
       }
 
       drawImage(rect2, img2, 1);

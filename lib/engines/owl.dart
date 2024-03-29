@@ -9,6 +9,8 @@ class OwlEngine {
   // save piece and color before movement from square
   int anm_sq = -1, anm_pc = 0, anm_cl = 0;
 
+  String MoveslistUcis = ""; // contains uci list of moves for web link
+
   OwlEngine() {
     owl = OWL();
     MAXPLY = 4;
@@ -73,6 +75,7 @@ class OwlEngine {
     String from = owl.sq2str(f), to = owl.sq2str(t);
     String ucimove = from + to;
     owl.DoMoveByStr(ucimove);
+    MoveslistUcis += ucimove + "_";
   }
 
   // Do engine shoud make a move? Then calculate and do it.
@@ -121,11 +124,13 @@ class OwlEngine {
 
   NewGame() {
     owl.ResetGame();
+    MoveslistUcis = "";
   }
 
   TakeBack() {
     if (owl.mc > 1) {
       owl.UndoMove();
+      MoveslistUcis = MoveslistUcis.substring(0, MoveslistUcis.length - 5);
     }
   }
 
