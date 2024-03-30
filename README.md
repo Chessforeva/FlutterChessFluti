@@ -2,14 +2,14 @@
 
 <img src="icons/flutter-icon-512.png" width="50">
 
-A simple flutter chess playing application developed in flutter.
+A simple chess playing application developed in [Flutter](https://flutter.dev)
 There are two old chess engines ported to .dart language.
 Kind of experimental exploration of flutter on MS VSCode.
 Everything is shareable and advanceable anywhere.
 
 ## Version
 
-Currently 1.0.8
+Currently 1.0.8  mar.2024
 
 Web application is playable on web (~10Mb)
 https://chessforeva.github.io
@@ -40,9 +40,6 @@ Nobody likes losing in chess all day.
 Prepare for lots of flutter works after downloading sources.
 Just read what people say and look at other flutter projects.
 Or add these folders to the flutter hello world.
-
-Alpha version for now.
-mar.2024
 
 ## Helper
 
@@ -82,8 +79,7 @@ Right-click the empty space on the right pane, and create two DWORD (32-bit) val
 AllowAllTrustedApps = 1
 AllowDevelopmentWithoutDevLicense = 1.
   ```
-
-<img src="screens/AppModelUnlock.png" width=100/>
+[image](screens/AppModelUnlock.png)
 
 2. Find shortcut on Desktop to MS VSCode and open with Right-click "Run as administrator"!!!
 
