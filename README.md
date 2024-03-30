@@ -1,8 +1,10 @@
 # FlutiChess
 
+<img src="icons/flutter-icon-512.png" width="50">
+
 A simple flutter chess playing application developed in flutter.
 There are two old chess engines ported to .dart language.
-Kind of experimental exploration of flutter on MS vscode.
+Kind of experimental exploration of flutter on MS VSCode.
 Everything is shareable and advanceable anywhere.
 
 ## Version
@@ -72,26 +74,47 @@ Also, on building windows there were errors: Developer Mode is turned off, which
 So, I solved it, as google said:
 
 1. Open the Registry Editor (start "regedit") and navigate to the following key:
+  ```sh
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock
+  ```
 Right-click the empty space on the right pane, and create two DWORD (32-bit) values: 
-AllowAllTrustedApps = 1, AllowDevelopmentWithoutDevLicense = 1.
+  ```
+AllowAllTrustedApps = 1
+AllowDevelopmentWithoutDevLicense = 1.
+  ```
 
-2.Find shortcut on Desktop to MS VSCode and open with Right-click "Run as administrator"!!!
+<img src="screens/AppModelUnlock.png" width=100/>
 
-3.Go to terminal and "flutter build windows". No errors and Developer Mode is ok.
+2. Find shortcut on Desktop to MS VSCode and open with Right-click "Run as administrator"!!!
 
+3. Go to terminal and "flutter build windows". No errors and Developer Mode is ok.
+
+### Android gradle
+
+- It requires Android Studio be installed.
+- Icons should be placed in folders for each resolution. Just like in old days of javame.
+- Try cleaning when cached builds go wrong way.
+- Also look for versions in dependancies, may be too high agressive.
+
+### Web build
+
+Dart compiles into encoded js + webassembly. Seems very fast and best for testing compared to android emulators or win executables. 
 
 ### Cache
 
 I found that Flutter makes large Cache folder on build
+  ```sh
 C:\Users\<user>\AppData\Local\Pub\Cache
-Deleting it took long time. I think it should be cleaned sometimes as Recycle Bin.
+  ```
+Deletion of it took long time. I think it should be cleaned sometimes as Recycle Bin.
 
 ### UInt64 type
 
-In .js, there is Safe integer. So, only such numbers can be in written in scripts. And (1<<32) does not work.
+In .js, there is Safe integer Number.isSafeInteger(), just because of holding values in 52 bits. So, only such numbers can be in written in scripts. Compiles ok, but usage gives aproximate results on big numbers.
+Also (1<<32) does not work as for 64 bit platforms.
+
 In .dart Int numbers are signed. So, (1<<63) is a negative number. But it is ok if we use bitwises only. Then unsigned not needed.
-Lousy chess engine uses multiplication for magics, but all results are verified ok for dart. Do not try use these magics for C or java.
+Lousy chess engine uses Int multiplication for magics, but all results are verified ok for dart. Do not try use these magics for C or java, or use signed as dart.
 
 ## Thanks
 
