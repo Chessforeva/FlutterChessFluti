@@ -91,8 +91,9 @@ class _GameBoardState extends State<Painter>
     ldImg(A + "takeback.png").then((r) => setState(() => PH.bTB = r));
     ldImg(A + "pgnview.png").then((r) => setState(() => PH.bPG = r));
     ldImg(A + "about.png").then((r) => setState(() => PH.bGI = r));
-    ldImg(A + "lousy.png").then((r) => setState(() => PH.bLo = r));
     ldImg(A + "owl.png").then((r) => setState(() => PH.bOw = r));
+    ldImg(A + "fruit.png").then((r) => setState(() => PH.bFr = r));
+    ldImg(A + "lousy.png").then((r) => setState(() => PH.bLo = r));
     ldImg(A + "yourmove.png").then((r) => setState(() => PH.tYM = r));
     ldImg(A + "thinking.png").then((r) => setState(() => PH.tTH = r));
     ldImg(A + "stalemate.png").then((r) => setState(() => PH.tST = r));
@@ -187,24 +188,24 @@ class myPainter extends CustomPainter {
 
   // put all buttons on screen
   void drawButtonsTexts() {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 7; i++) {
       bool f = true;
       // Lousy uses 64bits
-      if (i == 3 && (!PH.is64bitOK)) f = false;
+      if (i == 4 && (!PH.is64bitOK)) f = false;
 
       //-------if disable url_launcher
 
       //---- pgn part, not to go to WorkSheet
-      //if (i == 4) f = false;
-      //---- not to go to GitHub
       //if (i == 5) f = false;
+      //---- not to go to GitHub
+      //if (i == 6) f = false;
 
       if (f) drawButtTxt(PH.but_Img(i), i);
     }
 
     ui.Image? iT = null;
 
-    // position 6 is text
+    // position 7 is text
     if (PH.isRep3x) iT = PH.tRP;
 
     if (PH.txtYourMove) iT = PH.tYM;
@@ -214,7 +215,7 @@ class myPainter extends CustomPainter {
     if (PH.isCheckMate) iT = (PH.gameResult == "1-0" ? PH.tCM10 : PH.tCM01);
 
     if (PH.txtThinking) iT = PH.tTH;
-    if (iT != null) drawButtTxt(iT, 6);
+    if (iT != null) drawButtTxt(iT, 7);
   }
 
   // chess-board
@@ -312,18 +313,16 @@ class myPainter extends CustomPainter {
 
     drawImage(rect, img, scale);
 
-    if (I == 2 || I == 3) {
+    if (I == 2 || I == 3 || I == 4) {
       double sc2 = 12 * scale;
       Rect rect2 =
           Rect.fromLTWH(x + (imgSz * 0.55), y + (imgSz * 0.60), sc2, sc2);
 
-      ui.Image? img2 = PH.lm0;
-      if (I == 2) {
-        if (PH.Owl.Tck > 0 || PH.Owl.LampTck > 0) img2 = PH.lm1;
-      }
-      if (I == 3) {
-        if (PH.Lousy.Tck > 0 || PH.Lousy.LampTck > 0) img2 = PH.lm1;
-      }
+      bool Lamp = (I == 2 && (PH.Owl.Tck > 0 || PH.Owl.LampTck > 0)) ||
+          (I == 3 && (PH.Fruit.Tck > 0 || PH.Fruit.LampTck > 0)) ||
+          (I == 4 && (PH.Lousy.Tck > 0 || PH.Lousy.LampTck > 0));
+
+      ui.Image? img2 = (Lamp ? PH.lm1 : PH.lm0);
 
       drawImage(rect2, img2, 1);
     }

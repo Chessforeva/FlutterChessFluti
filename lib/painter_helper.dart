@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import 'engines/owl.dart';
+import 'engines/fruit.dart';
 import 'engines/lousy.dart';
 
 // square
@@ -59,18 +60,21 @@ class PainterHelper {
   // explosion animation
   ui.Image? ex1, ex2, ex3, ex4;
   // buttons
-  ui.Image? bNG, bTB, bLo, bOw, bPG, bGI;
+  ui.Image? bNG, bTB, bOw, bFr, bLo, bPG, bGI;
   // texts on screen
   ui.Image? tYM, tTH, tST, tCK, tCM10, tCM01, tRP;
   // a small lamp on-off
   ui.Image? lm1, lm0;
 
-  static const Engine_OWL = 1, Engine_LOUSY = 2;
+  static const Engine_OWL = 1;
+  static const Engine_FRUIT = 2;
+  static const Engine_LOUSY = 3;
   int Engine_Selected = Engine_OWL;
 
   // Chess engines
-  late LousyEngine Lousy;
   late OwlEngine Owl;
+  late FruitEngine Fruit;
+  late LousyEngine Lousy;
   bool is64bitOK = (((1 << 32) >>> 1) == (1 << 31));
 
 // squares positions
@@ -84,12 +88,13 @@ class PainterHelper {
 
   // construct
   PainterHelper() {
-    if (is64bitOK) Lousy = LousyEngine();
     Owl = OwlEngine();
+    Fruit = FruitEngine();
+    if (is64bitOK) Lousy = LousyEngine();
 
     int i;
     for (i = 0; i < 64; i++) sqDatas.add(sqData());
-    for (i = 0; i < 7; i++) btDatas.add(sqData());
+    for (i = 0; i <= 7; i++) btDatas.add(sqData());
   }
 
   // shoild repaint on animation or not
@@ -121,8 +126,8 @@ class PainterHelper {
     if ((mi + a) > (ma - 4)) a = mi / 9;
 
     // Adjust board size...
-    while (SquareSize < (a + 11) && SquareSize < 90) SquareSize += 10;
-    while (SquareSize > (a - 1) && SquareSize > 30) SquareSize -= 10;
+    while (SquareSize < (a + 11) && SquareSize < 90) SquareSize++;
+    while (SquareSize > (a - 1) && SquareSize > 30) SquareSize--;
   }
 
   bool isDarkSq(int sq) {
@@ -152,24 +157,24 @@ class PainterHelper {
   // buttons
 
   ui.Image? but_Img(int i) {
-    return [bNG, bTB, bOw, bLo, bPG, bGI][i];
+    return [bNG, bTB, bOw, bFr, bLo, bPG, bGI][i];
   }
 
   double but_scale(int i) {
-    if (i < 6) return 1.2;
-    if (i == 6) return 1.8;
+    if (i < 7) return 1.2;
+    if (i == 7) return 1.8;
     return 1;
   }
 
   double but_x0(int i) {
-    if (i < 6) return 4.0;
-    if (i == 6) return -2.0;
+    if (i < 7) return 4.0;
+    if (i == 7) return -2.0;
     return 0.0;
   }
 
   double but_y0(int i) {
-    if (i < 6) return 4.0;
-    if (i == 6) return -20.0;
+    if (i < 7) return 4.0;
+    if (i == 7) return -20.0;
     return 0.0;
   }
 
@@ -250,7 +255,7 @@ class PainterHelper {
 
     // verify buttons
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < 7; i++) {
       sqData Ob = btDatas[i];
 
       if (Ob.rect != null &&
@@ -266,13 +271,17 @@ class PainterHelper {
           Owl.LampTck = 20;
         }
         if (i == 3) {
+          Engine_Selected = Engine_FRUIT;
+          Fruit.LampTck = 20;
+        }
+        if (i == 4) {
           Engine_Selected = Engine_LOUSY;
           Lousy.LampTck = 20;
         }
 
         // allow for flutter build web
-        if (i == 4) goWorkSheet = true;
-        if (i == 5) goGitHub = true;
+        if (i == 5) goWorkSheet = true;
+        if (i == 6) goGitHub = true;
       }
     }
   }
@@ -287,9 +296,9 @@ class PainterHelper {
 
   MoveAfterAnimation() {
     Owl.RestorePieceSq();
-
-    if (is64bitOK) Lousy.MakeMove(Anim_from_square, Anim_to_square);
     Owl.MakeMove(Anim_from_square, Anim_to_square);
+    Fruit.MakeMove(Anim_from_square, Anim_to_square);
+    if (is64bitOK) Lousy.MakeMove(Anim_from_square, Anim_to_square);
   }
 
   // Start a new game
@@ -299,6 +308,7 @@ class PainterHelper {
 
     ImPlayingWhite = !ImPlayingWhite;
     Owl.NewGame();
+    Fruit.NewGame();
     if (is64bitOK) Lousy.NewGame();
     repaint = true;
     PauseWait = 10;
@@ -311,6 +321,7 @@ class PainterHelper {
 
     for (int i = 0; i < 2; i++) {
       Owl.TakeBack();
+      Fruit.TakeBack();
       if (is64bitOK) Lousy.TakeBack();
     }
     repaint = true;
@@ -350,6 +361,20 @@ class PainterHelper {
       return;
     }
 
+    if (Owl.LampTck > 0) {
+      Owl.LampTck--;
+      if (Owl.LampTck == 0) PauseWait = 15;
+      repaint = true;
+      return;
+    }
+
+    if (Fruit.LampTck > 0) {
+      Fruit.LampTck--;
+      if (Fruit.LampTck == 0) PauseWait = 15;
+      repaint = true;
+      return;
+    }
+
     if (is64bitOK) {
       if (Lousy.LampTck > 0) {
         Lousy.LampTck--;
@@ -357,13 +382,6 @@ class PainterHelper {
         repaint = true;
         return;
       }
-    }
-
-    if (Owl.LampTck > 0) {
-      Owl.LampTck--;
-      if (Owl.LampTck == 0) PauseWait = 15;
-      repaint = true;
-      return;
     }
 
     if (isCheckMate || isStaleMate) return;
@@ -374,6 +392,8 @@ class PainterHelper {
     if (dragSquare == -1) {
       String a = "";
       if (Engine_Selected == Engine_OWL) a = Owl.Calculate(ImPlayingWhite);
+      if (Engine_Selected == Engine_FRUIT) a = Fruit.Calculate(ImPlayingWhite);
+
       if (Engine_Selected == Engine_LOUSY) {
         a = Lousy.Calculate(ImPlayingWhite);
         if (a.length >= 4) {

@@ -3,13 +3,13 @@
 <img src="icons/flutter-icon-512.png" width="50">
 
 A simple chess playing application developed in [Flutter](https://flutter.dev)
-There are two old chess engines ported to .dart language.
+There are 3 old chess engines ported to .dart language.
 Kind of experimental exploration of flutter on MS VSCode.
 Everything is shareable and advanceable anywhere.
 
 ## Version
 
-Currently 1.0.8  mar.2024
+Currently 1.0.8  apr.2024
 
 Web application is playable on web (~10Mb)
 https://chessforeva.github.io
@@ -24,13 +24,14 @@ IOS - not an Apple fanboy
 
 ## Screenshots
 
-<img src="https://chessforeva.codeberg.page/flutichess/flutichess_web.jpg" width=300/> | <img src="https://chessforeva.codeberg.page/flutichess/flutichess_windows.jpg" width=300/>
+<img src="https://chessforeva.codeberg.page/flutichess/flutichess_web.jpg" width=300/> | <img src="https://chessforeva.codeberg.page/flutichess/flutichess_windows_2.jpg" width=300/>
 
 ## Results
 
 Flutter is awesome. Just like Flash was for small games.
 Lousy chess engine requires 64 bit platform (not javascript VM).
 OwlChess is an oldie for 32 bit platform. Limited to play as noob.
+Also Fruit chess is very known, just a .dart version.
 In fact, AI is limited not to search. Fast enaugh.
 It is not Stockfish, it is dart and flutter programming.
 Nobody likes losing in chess all day.
@@ -103,6 +104,9 @@ I found that Flutter makes large Cache folder on build
 C:\Users\<user>\AppData\Local\Pub\Cache
   ```
 Deletion of it took long time. I think it should be cleaned sometimes as Recycle Bin.
+  ```sh
+flutter pub cache clean
+  ```
 
 ### UInt64 type
 
