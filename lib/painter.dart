@@ -286,7 +286,7 @@ class myPainter extends CustomPainter {
     }
   }
 
-  // chess-square
+  // buttons-square
   void drawButtTxt(ui.Image? img, int I) {
     double sqSize = PH.SqSize();
     double x = 0, y = 0;
@@ -300,11 +300,10 @@ class myPainter extends CustomPainter {
       x = I * sqSize;
     }
 
-    // Draw chess piece on it
+    // Draw a button on it
     double scale = PH.but_scale(I);
     double imgSz = sqSize * scale;
-    // Some ackward adjustables to better fit pieces in square :)
-    // Could Gimp litte bit more png-images instead...
+
     double a = 1 - ((7 - (sqSize / 10)) / 18);
 
     double X0 = PH.but_x0(I) * a, Y0 = PH.but_y0(I) * a;
@@ -330,7 +329,7 @@ class myPainter extends CustomPainter {
     PH.saveButTxtRect(I, rect);
   }
 
-  // draw animation
+  // draw animation of moving piece
   drawAnim() {
     double sqSize = PH.SqSize();
 
@@ -355,8 +354,7 @@ class myPainter extends CustomPainter {
     ui.Image? img = PH.imgCoTy(col, type);
     double scale = PH.scale(type);
     double imgSz = sqSize * scale;
-    // Some ackward adjustables to better fit pieces in square :)
-    // Could Gimp litte bit more png-images instead...
+
     double a = 1 - ((7 - (sqSize / 10)) / 18);
 
     double X0 = PH.x0(type) * a, Y0 = PH.y0(type) * a;
